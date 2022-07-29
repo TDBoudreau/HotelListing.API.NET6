@@ -11,29 +11,31 @@ using AutoMapper;
 using HotelListing.API.Core.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using HotelListing.API.Core.Exceptions;
+using Microsoft.AspNetCore.OData.Query;
 using HotelListing.API.Core.Models;
 
 namespace HotelListing.API.Controllers
 {
     [Route("api/v{version:apiVersion}/countries")]
     [ApiController]
-    [ApiVersion("1.0", Deprecated = true)]
+    [ApiVersion("2.0")]
     //[Authorize] //can't get to anything inside countries controller unless authorized
-    public class CountriesController : ControllerBase
+    public class CountriesV2Controller : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly ICountriesRepository _contriesRepository;
-        private readonly ILogger<CountriesController> _logger;
+        private readonly ILogger<CountriesV2Controller> _logger;
 
-        public CountriesController(IMapper mapper, ICountriesRepository contriesRepository, ILogger<CountriesController> logger)
+        public CountriesV2Controller(IMapper mapper, ICountriesRepository contriesRepository, ILogger<CountriesV2Controller> logger)
         {
             this._mapper = mapper;
             this._contriesRepository = contriesRepository;
             this._logger = logger;
         }
 
-        // GET: api/Countries/GetAll
-        [HttpGet("GetAll")]
+        // GET: api/Countries
+        [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<GetCountryDto>>> GetCountries()
         {
             var countries = await _contriesRepository.GetAllAsync();
@@ -41,7 +43,6 @@ namespace HotelListing.API.Controllers
             return Ok(records);
         }
 
-        // GET: api/Countries?StartIndex=0&PageSize=25&PageNumber=1
         [HttpGet]
         public async Task<ActionResult<PagedResult<GetCountryDto>>> GetPagedCountries([FromQuery] QueryParameters queryParameters)
         {
