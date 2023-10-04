@@ -7,8 +7,14 @@
         public int PageNumber { get; set; }
         public int PageSize
         {
-            get { return _pageSize; }
-            set { _pageSize = value; }
+            get
+            {
+                return _pageSize;
+            }
+            set
+            {
+                _pageSize = value;
+            }
         }
     }
 }

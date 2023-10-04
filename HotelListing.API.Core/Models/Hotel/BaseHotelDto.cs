@@ -6,7 +6,7 @@ namespace HotelListing.API.Core.Models.Hotel
     {
         [Required]
         public string Name { get; set; }
-        
+
         [Required]
         public string Address { get; set; }
 

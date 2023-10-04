@@ -4,6 +4,7 @@ using HotelListing.API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelListing.API.Migrations
 {
     [DbContext(typeof(HotelListingDbContext))]
-    partial class HotelListingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220312142642_AddedDefaultRoles")]
+    partial class AddedDefaultRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,11 +44,9 @@ namespace HotelListing.API.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -104,11 +104,9 @@ namespace HotelListing.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShortName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -145,14 +143,12 @@ namespace HotelListing.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CountryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Rating")
@@ -220,15 +216,15 @@ namespace HotelListing.API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "56a02d80-c2e2-4cd7-8b8c-af33c9f3539f",
-                            ConcurrencyStamp = "b93ed3b5-6c29-4d2d-ac02-160e04f696c0",
+                            Id = "db7fb006-5e10-4099-b462-ef8b3c616b30",
+                            ConcurrencyStamp = "1752cffa-71c1-4c0a-879b-88d84d5808b0",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "56622266-5c1c-43e2-8367-adf4a7fbe924",
-                            ConcurrencyStamp = "3001d68d-8925-4247-aa13-8b0649694f73",
+                            Id = "d89ce008-5e90-431c-845a-6828bfacd0c1",
+                            ConcurrencyStamp = "ef96e237-0c1d-461b-957c-ddf9d45476ac",
                             Name = "User",
                             NormalizedName = "USER"
                         });

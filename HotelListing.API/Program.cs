@@ -6,9 +6,9 @@ using HotelListing.API.Core.Repository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Versioning;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 using Microsoft.AspNetCore.OData;
@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 var connectionString = builder.Configuration.GetConnectionString("HotelListingDbConnectionString");
-builder.Services.AddDbContext <HotelListingDbContext>(options =>
+builder.Services.AddDbContext<HotelListingDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
 });
@@ -31,11 +31,42 @@ builder.Services.AddIdentityCore<ApiUser>()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel Listing API", Version = "v1" });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = @"JWT Autherization header using the Bearer scheme.
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      Example: 'Bearer 1234abcdef'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "Oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header
+            },
+            new List<string>()
+        }
+    });
+});
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", 
+    options.AddPolicy("AllowAll",
         b => b.AllowAnyHeader()
         .AllowAnyOrigin()
         .AllowAnyMethod());
@@ -68,7 +99,7 @@ builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<IHotelsRepository, HotelsRepository>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 
-//JWT JSON Web Token
+// JWT JSON Web Token
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // "Bearer"

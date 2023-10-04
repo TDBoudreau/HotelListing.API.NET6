@@ -7,6 +7,5 @@ namespace HotelListing.API.Core.Models.Country
         [Required]
         public string Name { get; set; }
         public string ShortName { get; set; }
-
     }
 }
