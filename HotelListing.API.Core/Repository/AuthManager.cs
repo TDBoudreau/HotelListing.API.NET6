@@ -58,7 +58,11 @@ namespace HotelListing.API.Core.Repository
             }
 
             var token = await GenerateToken();
-            _logger.LogInformation("Token generated for user with email {Email} | Token: {token}", loginDto.Email, token);
+            _logger.LogInformation(
+                "Token generated for user with email {Email} | Token: {token}",
+                loginDto.Email,
+                token
+            );
 
             return new AuthResponseDto
             {
@@ -87,13 +91,15 @@ namespace HotelListing.API.Core.Repository
         {
             var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             var tokenContent = jwtSecurityTokenHandler.ReadJwtToken(request.Token);
-            var username = tokenContent.Claims.ToList().FirstOrDefault(q => q.Type == JwtRegisteredClaimNames.Email)?.Value;
+            var username = tokenContent.Claims.ToList()
+                .FirstOrDefault(q => q.Type == JwtRegisteredClaimNames.Email)?.Value;
             _user = await _userManager.FindByNameAsync(username);
 
             if (_user == null || _user.Id != request.UserId)
                 return null;
 
-            var isValidRefreshToken = await _userManager.VerifyUserTokenAsync(_user, _loginProvider, _refreshToken, request.RefreshToken);
+            var isValidRefreshToken = await _userManager
+                .VerifyUserTokenAsync(_user, _loginProvider, _refreshToken, request.RefreshToken);
 
             if (isValidRefreshToken)
             {
@@ -124,10 +130,10 @@ namespace HotelListing.API.Core.Repository
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, _user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, _user.Email),
-                new Claim("uid", _user.Id),
+                new(JwtRegisteredClaimNames.Sub, _user.Email),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(JwtRegisteredClaimNames.Email, _user.Email),
+                new("uid", _user.Id),
             }
             .Union(userClaims).Union(roleClaims);
 
