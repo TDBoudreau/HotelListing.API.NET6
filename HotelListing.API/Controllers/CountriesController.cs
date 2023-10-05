@@ -26,9 +26,9 @@ namespace HotelListing.API.Controllers
 
         public CountriesController(IMapper mapper, ICountriesRepository countriesRepository, ILogger<CountriesController> logger)
         {
-            this._mapper = mapper;
-            this._countriesRepository = countriesRepository;
-            this._logger = logger;
+            _mapper = mapper;
+            _countriesRepository = countriesRepository;
+            _logger = logger;
         }
 
         // GET: api/Countries/GetAll
@@ -68,13 +68,9 @@ namespace HotelListing.API.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!await CountryExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();

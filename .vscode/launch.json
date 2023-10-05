@@ -10,7 +10,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/HotelListing.API/bin/Debug/net6.0/HotelListing.API.dll",
+      "program": "${workspaceFolder}/HotelListing.API/bin/Debug/net7.0/HotelListing.API.dll",
       "args": [],
       "cwd": "${workspaceFolder}/HotelListing.API",
       "stopAtEntry": false,

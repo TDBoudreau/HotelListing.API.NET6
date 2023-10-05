@@ -26,8 +26,8 @@ namespace HotelListing.API.Controllers
 
         public HotelsController(IHotelsRepository hotelsRepository, IMapper mapper)
         {
-            this._hotelsRepository = hotelsRepository;
-            this._mapper = mapper;
+            _hotelsRepository = hotelsRepository;
+            _mapper = mapper;
         }
 
         // GET: api/Hotels
@@ -66,13 +66,10 @@ namespace HotelListing.API.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!await HotelExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
+                
             }
 
             return NoContent();

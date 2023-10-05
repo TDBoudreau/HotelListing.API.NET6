@@ -26,9 +26,9 @@ namespace HotelListing.API.Controllers
 
         public CountriesV2Controller(IMapper mapper, ICountriesRepository countriesRepository, ILogger<CountriesV2Controller> logger)
         {
-            this._mapper = mapper;
-            this._countriesRepository = countriesRepository;
-            this._logger = logger;
+            _mapper = mapper;
+            _countriesRepository = countriesRepository;
+            _logger = logger;
         }
 
         // GET: api/Countries
@@ -58,16 +58,10 @@ namespace HotelListing.API.Controllers
         public async Task<IActionResult> PutCountry(int id, UpdateCountryDto updateCountryDto)
         {
             if (id != updateCountryDto.Id)
-            {
                 return BadRequest("Invalid Record Id");
-            }
 
-            var country = await _countriesRepository.GetAsync(id);
-
-            if (country == null)
-            {
+            var country = await _countriesRepository.GetAsync(id) ??
                 throw new NotFoundException(nameof(GetCountries), id);
-            }
 
             _mapper.Map(updateCountryDto, country);
 
@@ -78,13 +72,9 @@ namespace HotelListing.API.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!await CountryExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -108,12 +98,8 @@ namespace HotelListing.API.Controllers
         [Authorize(Roles ="Administrator")]
         public async Task<IActionResult> DeleteCountry(int id)
         {
-            var country = await _countriesRepository.GetAsync(id);
-            if (country == null)
-            {
+            var country = await _countriesRepository.GetAsync(id) ??
                 throw new NotFoundException(nameof(GetCountries), id);
-            }
-
             await _countriesRepository.DeleteAsync(id);
 
             return NoContent();

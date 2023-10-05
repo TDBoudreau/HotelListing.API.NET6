@@ -14,8 +14,8 @@ namespace HotelListing.API.Controllers
 
         public AccountController(IAuthManager authManager, ILogger<AccountController> logger)
         {
-            this._authManager = authManager;
-            this._logger = logger;
+            _authManager = authManager;
+            _logger = logger;
         }
 
         // POST: api/Account/register
@@ -50,12 +50,10 @@ namespace HotelListing.API.Controllers
         public async Task<ActionResult> Login([FromBody] LoginDto loginDto)
         {
             _logger.LogInformation("Login Attempt for {Email}", loginDto.Email);
+            
             var authResponse = await _authManager.Login(loginDto);
-
             if (authResponse == null)
-            {
                 return Unauthorized();
-            }
 
             return Ok(authResponse);
 
@@ -70,11 +68,8 @@ namespace HotelListing.API.Controllers
         public async Task<ActionResult> RefreshToken([FromBody] AuthResponseDto request)
         {
             var authResponse = await _authManager.VerifyRefreshToken(request);
-
             if (authResponse == null)
-            {
                 return Unauthorized();
-            }
 
             return Ok(authResponse);
         }

@@ -19,8 +19,8 @@ namespace HotelListing.API.Core.Repository
 
         public GenericRepository(HotelListingDbContext context, IMapper mapper)
         {
-            this._context = context;
-            this._mapper = mapper;
+            _context = context;
+            _mapper = mapper;
         }
 
         public async Task<T> AddAsync(T entity)
@@ -42,12 +42,8 @@ namespace HotelListing.API.Core.Repository
 
         public async Task DeleteAsync(int id)
         {
-            var entity = await GetAsync(id);
-
-            if (entity is null)
-            {
+            var entity = await GetAsync(id) ??
                 throw new NotFoundException(typeof(T).Name, id);
-            }
 
             _context.Set<T>().Remove(entity);
             await _context.SaveChangesAsync();
@@ -91,22 +87,16 @@ namespace HotelListing.API.Core.Repository
 
         public async Task<T> GetAsync(int? id)
         {
-            var result = await _context.Set<T>().FindAsync(id);
-            if (result is null)
-            {
+            var result = await _context.Set<T>().FindAsync(id) ??
                 throw new NotFoundException(typeof(T).Name, id.HasValue ? id : "No Key Provided");
-            }
 
             return result;
         }
 
         public async Task<TResult> GetAsync<TResult>(int? id)
         {
-            var result = await _context.Set<T>().FindAsync(id);
-            if (result is null)
-            {
+            var result = await _context.Set<T>().FindAsync(id) ??
                 throw new NotFoundException(typeof(T).Name, id.HasValue ? id : "No Key Provided");
-            }
 
             return _mapper.Map<TResult>(result);
         }
@@ -120,16 +110,9 @@ namespace HotelListing.API.Core.Repository
         public async Task UpdateAsync<TSource>(int id, TSource source) where TSource : IBaseDto
         {
             if (id != source.Id)
-            {
                 throw new BadRequestException("Invalid Id used in request");
-            }
 
-            var entity = await GetAsync(id);
-
-            if (entity == null)
-            {
-                throw new NotFoundException(typeof(T).Name, id);
-            }
+            var entity = await GetAsync(id) ?? throw new NotFoundException(typeof(T).Name, id);
 
             _mapper.Map(source, entity);
             _context.Update(entity);

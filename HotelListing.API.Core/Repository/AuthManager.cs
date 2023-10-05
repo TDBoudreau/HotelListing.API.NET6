@@ -25,10 +25,10 @@ namespace HotelListing.API.Core.Repository
 
         public AuthManager(IMapper mapper, UserManager<ApiUser> userManager, IConfiguration configuration, ILogger<AuthManager> logger)
         {
-            this._mapper = mapper;
-            this._userManager = userManager;
-            this._configuration = configuration;
-            this._logger = logger;
+            _mapper = mapper;
+            _userManager = userManager;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<string> CreateRefreshToken()
@@ -91,9 +91,7 @@ namespace HotelListing.API.Core.Repository
             _user = await _userManager.FindByNameAsync(username);
 
             if (_user == null || _user.Id != request.UserId)
-            {
                 return null;
-            }
 
             var isValidRefreshToken = await _userManager.VerifyUserTokenAsync(_user, _loginProvider, _refreshToken, request.RefreshToken);
 
@@ -114,7 +112,9 @@ namespace HotelListing.API.Core.Repository
 
         private async Task<string> GenerateToken()
         {
-            var securitykey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"]));
+            var securitykey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_configuration["JwtSettings:Key"])
+            );
 
             var credentials = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
 

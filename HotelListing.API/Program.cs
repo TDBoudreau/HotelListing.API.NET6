@@ -150,7 +150,8 @@ builder.Services.AddHealthChecks()
         builder.Configuration.GetConnectionString("HotelListingDbConnectionString"),
         tags: new[] { "database" }
     )
-    // Can change type from 'HotelListingDbContext' to monitor multiple databases
+    // Can add more with different types than 'HotelListingDbContext' 
+    // to monitor multiple databases
     .AddDbContextCheck<HotelListingDbContext>(tags: new[] { "database" });
 
 builder.Services.AddControllers().AddOData(options =>
@@ -275,6 +276,85 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Landing page for useful links
+const string landingPageHtml = @"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Tim's API</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 40px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #7f8c8d;
+        }
+
+        h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            background-color: #fff;
+            border: 1px solid #ecf0f1;
+            padding: 15px 25px;
+            border-radius: 5px;
+            list-style-type: none;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #3498db;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Tim's API</h1>
+    <h2>Helpful links:</h2>
+
+    <h3>Swagger UI</h3>
+    <ul>
+        <li><a href='/swagger'>API Documentation & Testing</a></li>
+    </ul>
+
+    <h3>Health Checks</h3>
+    <ul>
+        <li><a href='/healthz'>All</a></li>
+        <li><a href='/healthcheck'>App</a></li>
+        <li><a href='/databasehealthcheck'>Database</a></li>
+    </ul>
+</body>
+</html>";
+
+// Adding RouteEndpoint to IEndpointRouteBuilder for landing page
+app.MapGet("/", context => 
+{
+    context.Response.ContentType = "text/html";
+    return context.Response.WriteAsync(landingPageHtml);
+});
 
 app.Run();
 

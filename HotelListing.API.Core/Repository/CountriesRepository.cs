@@ -15,20 +15,16 @@ namespace HotelListing.API.Core.Repository
 
         public CountriesRepository(HotelListingDbContext context, IMapper mapper) : base(context, mapper)
         {
-            this._context = context;
-            this._mapper = mapper;
+            _context = context;
+            _mapper = mapper;
         }
 
         public async Task<CountryDto> GetDetails(int id)
         {
             var country = await _context.Countries.Include(q => q.Hotels)
                 .ProjectTo<CountryDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(q => q.Id == id);
-
-            if (country == null)
-            {
-                throw new NotFoundException(nameof(GetDetails), id);
-            }
+                .FirstOrDefaultAsync(q => q.Id == id) ??
+                    throw new NotFoundException(nameof(GetDetails), id);
 
             return country;
         }
