@@ -4,10 +4,10 @@ using HotelListing.API.Data;
 
 namespace HotelListing.API.Core.Repository
 {
-  public class HotelsRepository : GenericRepository<Hotel>, IHotelsRepository
-  {
-    public HotelsRepository(HotelListingDbContext context, IMapper mapper) : base(context, mapper)
+    public class HotelsRepository : GenericRepository<Hotel>, IHotelsRepository
     {
+        public HotelsRepository(HotelListingDbContext context, IMapper mapper) : base(context, mapper)
+        {
+        }
     }
-  }
 }

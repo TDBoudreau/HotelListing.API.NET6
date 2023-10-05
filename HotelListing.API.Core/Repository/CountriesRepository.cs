@@ -8,25 +8,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HotelListing.API.Core.Repository
 {
-  public class CountriesRepository : GenericRepository<Country>, ICountriesRepository
-  {
-    private readonly HotelListingDbContext _context;
-    private readonly IMapper _mapper;
-
-    public CountriesRepository(HotelListingDbContext context, IMapper mapper) : base(context, mapper)
+    public class CountriesRepository : GenericRepository<Country>, ICountriesRepository
     {
-      _context = context;
-      _mapper = mapper;
-    }
+        private readonly HotelListingDbContext _context;
+        private readonly IMapper _mapper;
 
-    public async Task<CountryDto> GetDetails(int id)
-    {
-      var country = await _context.Countries.Include(q => q.Hotels)
-          .ProjectTo<CountryDto>(_mapper.ConfigurationProvider)
-          .FirstOrDefaultAsync(q => q.Id == id) ??
-              throw new NotFoundException(nameof(GetDetails), id);
+        public CountriesRepository(HotelListingDbContext context, IMapper mapper) : base(context, mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
 
-      return country;
+        public async Task<CountryDto> GetDetails(int id)
+        {
+            var country = await _context.Countries.Include(q => q.Hotels)
+                              .ProjectTo<CountryDto>(_mapper.ConfigurationProvider)
+                              .FirstOrDefaultAsync(q => q.Id == id) ??
+                          throw new NotFoundException(nameof(GetDetails), id);
+
+            return country;
+        }
     }
-  }
 }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace HotelListing.API.Core.Models
 {
-  public interface IBaseDto
-  {
-    int Id { get; set; }
-  }
+    public interface IBaseDto
+    {
+        int Id { get; set; }
+    }
 }
