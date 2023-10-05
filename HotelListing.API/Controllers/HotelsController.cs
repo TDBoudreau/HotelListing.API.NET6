@@ -41,7 +41,7 @@ namespace HotelListing.API.Controllers
         // GET: api/Hotels/?StartIndex=0&pagesize=25&PageNumber=1
         [HttpGet]
         public async Task<ActionResult<PagedResult<HotelDto>>> GetPagedHotels([FromQuery] QueryParameters queryParameters)
-{
+        {
             var pagedHotelsResult = await _hotelsRepository.GetAllAsync<HotelDto>(queryParameters);
             return Ok(pagedHotelsResult);
         }
@@ -91,7 +91,7 @@ namespace HotelListing.API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
-            await _hotelsRepository.DeleteAsync(id); 
+            await _hotelsRepository.DeleteAsync(id);
             return NoContent();
         }
 

@@ -26,7 +26,7 @@ namespace HotelListing.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Register([FromBody] ApiUserDto apiUserDto)
         {
-            _logger.LogInformation($"Registration Attempt for {apiUserDto.Email}");
+            _logger.LogInformation("Registration Attempt for {Email}", apiUserDto.Email);
             var errors = await _authManager.Register(apiUserDto);
 
             if (errors.Any())
@@ -49,7 +49,7 @@ namespace HotelListing.API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> Login([FromBody] LoginDto loginDto)
         {
-            _logger.LogInformation($"Login Attempt for {loginDto.Email} ");
+            _logger.LogInformation("Login Attempt for {Email}", loginDto.Email);
             var authResponse = await _authManager.Login(loginDto);
 
             if (authResponse == null)

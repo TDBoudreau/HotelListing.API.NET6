@@ -25,12 +25,12 @@ namespace HotelListing.API.Core.Middleware
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Something Went wrong while processing {context.Request.Path}");
+                _logger.LogError(ex, "Something Went wrong while processing {Path}", context.Request.Path);
                 await HandleExceptionAsync(context, ex);
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext context, Exception ex)
+        private static Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             context.Response.ContentType = "application/json";
             HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
@@ -42,11 +42,11 @@ namespace HotelListing.API.Core.Middleware
 
             switch (ex)
             {
-                case NotFoundException notFoundException:
+                case NotFoundException:
                     statusCode = HttpStatusCode.NotFound;
                     errorDetails.ErrorType = "Not Found";
                     break;
-                case BadRequestException badRequestException:
+                case BadRequestException:
                     statusCode = HttpStatusCode.BadRequest;
                     errorDetails.ErrorType = "Bad Request";
                     break;

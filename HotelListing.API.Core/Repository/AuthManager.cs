@@ -41,11 +41,11 @@ namespace HotelListing.API.Core.Repository
 
         public async Task<AuthResponseDto> Login(LoginDto loginDto)
         {
-            _logger.LogInformation($"Looking for user with email {loginDto.Email}");
+            _logger.LogInformation("Looking for user with email {Email}", loginDto.Email);
             _user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (_user is null)
             {
-                _logger.LogWarning($"No user found with email {loginDto.Email}");
+                _logger.LogWarning("No user found with email {Email}", loginDto.Email);
                 return default;
             }
 
@@ -53,12 +53,12 @@ namespace HotelListing.API.Core.Repository
 
             if (!isValidCredentials)
             {
-                _logger.LogWarning($"Invalid credentials provided for email {loginDto.Email}");
+                _logger.LogWarning("Invalid credentials provided for email {Email}", loginDto.Email);
                 return default;
             }
 
             var token = await GenerateToken();
-            _logger.LogInformation($"Token generated for user with email {loginDto.Email} | Token: {token}");
+            _logger.LogInformation("Token generated for user with email {Email} | Token: {token}", loginDto.Email, token);
 
             return new AuthResponseDto
             {
