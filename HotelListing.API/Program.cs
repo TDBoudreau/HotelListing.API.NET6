@@ -124,16 +124,18 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddResponseCaching(options =>
 {
-    options.MaximumBodySize = 1024; //in bytes the largest cacheable piece of data allowed to cache
-    options.UseCaseSensitivePaths = true; //if someone requests a path with a different capitalization it will store the new request as well
+    options.MaximumBodySize = 1024; // in bytes the largest cacheable piece of data allowed to cache
+    options.UseCaseSensitivePaths = true; // if someone requests a path with a different capitalization it will store the new request as well
 });
 
 builder.Services.AddHealthChecks()
     .AddCheck<CustomHealthCheck>(
         "Custom Health Check",
         failureStatus: HealthStatus.Degraded,
+        // Tags allow us to filter between types of health checks
         tags: new[] { "custom" }
     ).AddSqlServer(connectionString, tags: new[] { "database" })
+    // Can change type to monitor multiple databases
     .AddDbContextCheck<HotelListingDbContext>(tags: new[] { "database" });
 
 builder.Services.AddControllers().AddOData(options =>
@@ -149,7 +151,7 @@ if (app.Environment.IsDevelopment()) { }
 app.UseSwagger();
 app.UseSwaggerUI();
 
-// Can choose whatever endpoint you want I chose '/healthcheck'
+// Can change the endpoint to anything. I chose '/healthcheck'
 app.MapHealthChecks("/healthcheck", new HealthCheckOptions
 {
     Predicate = healthcheck => healthcheck.Tags.Contains("custom"),
