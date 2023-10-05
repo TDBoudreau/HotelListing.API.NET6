@@ -20,7 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-var connectionString = builder.Configuration.GetConnectionString("HotelListingDbConnectionString");
+var connectionString = builder.Configuration
+    .GetConnectionString("HotelListingDbConnectionString");
 builder.Services.AddDbContext<HotelListingDbContext>(options =>
 {
     options.UseSqlServer(connectionString);
@@ -36,7 +37,11 @@ builder.Services.AddIdentityCore<ApiUser>()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel Listing API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Hotel Listing API",
+        Version = "v1"
+    });
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = @"JWT Autherization header using the Bearer scheme.
@@ -84,7 +89,7 @@ builder.Services.AddApiVersioning(options =>
         new QueryStringApiVersionReader("api-version"),
         new HeaderApiVersionReader("X-Version"),
         new MediaTypeApiVersionReader("ver")
-        );
+    );
 });
 
 builder.Services.AddVersionedApiExplorer(options =>
@@ -93,11 +98,13 @@ builder.Services.AddVersionedApiExplorer(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
-builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.Configuration(ctx.Configuration));
+builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.
+    Configuration(ctx.Configuration));
 
 builder.Services.AddAutoMapper(typeof(MapperConfig));
 
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped(typeof(IGenericRepository<>),
+    typeof(GenericRepository<>));
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<IHotelsRepository, HotelsRepository>();
 builder.Services.AddScoped<IAuthManager, AuthManager>();
@@ -118,14 +125,19 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero,
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])
+        )
     };
 });
 
 builder.Services.AddResponseCaching(options =>
 {
-    options.MaximumBodySize = 1024; // in bytes the largest cacheable piece of data allowed to cache
-    options.UseCaseSensitivePaths = true; // if someone requests a path with a different capitalization it will store the new request as well
+    // in bytes the largest cacheable piece of data allowed to cache
+    options.MaximumBodySize = 1024;
+    // if someone requests a path with a different capitalization it will
+    // store the new request as well
+    options.UseCaseSensitivePaths = true;
 });
 
 builder.Services.AddHealthChecks()
@@ -134,8 +146,11 @@ builder.Services.AddHealthChecks()
         failureStatus: HealthStatus.Degraded,
         // Tags allow us to filter between types of health checks
         tags: new[] { "custom" }
-    ).AddSqlServer(connectionString, tags: new[] { "database" })
-    // Can change type to monitor multiple databases
+    ).AddSqlServer(
+        builder.Configuration.GetConnectionString("HotelListingDbConnectionString"),
+        tags: new[] { "database" }
+    )
+    // Can change type from 'HotelListingDbContext' to monitor multiple databases
     .AddDbContextCheck<HotelListingDbContext>(tags: new[] { "database" });
 
 builder.Services.AddControllers().AddOData(options =>
@@ -158,8 +173,8 @@ app.MapHealthChecks("/healthcheck", new HealthCheckOptions
     ResultStatusCodes =
     {
         [HealthStatus.Healthy] = StatusCodes.Status200OK,
-        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
         [HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
     },
     ResponseWriter = WriteResponse
 });
@@ -170,19 +185,20 @@ app.MapHealthChecks("/databasehealthcheck", new HealthCheckOptions
     ResultStatusCodes =
     {
         [HealthStatus.Healthy] = StatusCodes.Status200OK,
-        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
         [HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
     },
     ResponseWriter = WriteResponse
 });
+//.RequireAuthorization(); // returns 401 if unauthorized
 
 app.MapHealthChecks("/healthz", new HealthCheckOptions
 {
     ResultStatusCodes =
     {
         [HealthStatus.Healthy] = StatusCodes.Status200OK,
-        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
         [HealthStatus.Degraded] = StatusCodes.Status200OK,
+        [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
     },
     ResponseWriter = WriteResponse
 });
@@ -203,15 +219,19 @@ static Task WriteResponse(HttpContext context, HealthReport report)
         foreach (var healthReportEntry in report.Entries)
         {
             jsonWriter.WriteStartObject(healthReportEntry.Key);
-            jsonWriter.WriteString("status", healthReportEntry.Value.Status.ToString());
-            jsonWriter.WriteString("description", healthReportEntry.Value.Description);
+            jsonWriter.WriteString("status",
+                healthReportEntry.Value.Status.ToString());
+            jsonWriter.WriteString("description",
+                healthReportEntry.Value.Description);
             jsonWriter.WriteStartObject("data");
 
             foreach (var item in healthReportEntry.Value.Data)
             {
                 jsonWriter.WritePropertyName(item.Key);
 
-                JsonSerializer.Serialize(jsonWriter, item.Value, item.Value?.GetType() ?? typeof(object));
+                JsonSerializer.Serialize(
+                    jsonWriter, item.Value,
+                    item.Value?.GetType() ?? typeof(object));
             }
 
             jsonWriter.WriteEndObject();
@@ -260,7 +280,9 @@ app.Run();
 
 class CustomHealthCheck : IHealthCheck
 {
-    public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    public Task<HealthCheckResult> CheckHealthAsync(
+        HealthCheckContext context,
+        CancellationToken cancellationToken = default)
     {
         var isHealthy = true;
 
@@ -268,9 +290,14 @@ class CustomHealthCheck : IHealthCheck
 
         if (isHealthy)
         {
-            return Task.FromResult(HealthCheckResult.Healthy("All systems are looking good"));
+            return Task.FromResult(HealthCheckResult.Healthy(
+                "All systems are looking good"
+            ));
         }
 
-        return Task.FromResult(new HealthCheckResult(context.Registration.FailureStatus, "System Unhealthy"));
+        return Task.FromResult(new HealthCheckResult(
+                context.Registration.FailureStatus, "System Unhealthy"
+            )
+        );
     }
 }
