@@ -24,7 +24,7 @@ var connectionString = builder.Configuration
     .GetConnectionString("HotelListingDbConnectionString");
 builder.Services.AddDbContext<HotelListingDbContext>(options =>
 {
-    options.UseSqlServer(connectionString);
+  options.UseSqlServer(connectionString);
 });
 
 builder.Services.AddIdentityCore<ApiUser>()
@@ -37,49 +37,49 @@ builder.Services.AddIdentityCore<ApiUser>()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Hotel Listing API",
-        Version = "v1"
-    });
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = @"JWT Autherization header using the Bearer scheme.
+  options.SwaggerDoc("v1", new OpenApiInfo
+  {
+    Title = "Hotel Listing API",
+    Version = "v1"
+  });
+  options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+  {
+    Description = @"JWT Autherization header using the Bearer scheme.
                       Enter 'Bearer' [space] and then your token in the text input below.
                       Example: 'Bearer 1234abcdef'",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-    });
+    Name = "Authorization",
+    In = ParameterLocation.Header,
+    Type = SecuritySchemeType.ApiKey,
+    Scheme = "Bearer",
+  });
 
-    options.OperationFilter<AuthorizeCheckOperationFilter>();
+  options.OperationFilter<AuthorizeCheckOperationFilter>();
 });
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        b => b.AllowAnyHeader()
-        .AllowAnyOrigin()
-        .AllowAnyMethod());
+  options.AddPolicy("AllowAll",
+      b => b.AllowAnyHeader()
+      .AllowAnyOrigin()
+      .AllowAnyMethod());
 });
 
 builder.Services.AddApiVersioning(options =>
 {
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
-    options.ReportApiVersions = true;
-    options.ApiVersionReader = ApiVersionReader.Combine(
-        new QueryStringApiVersionReader("api-version"),
-        new HeaderApiVersionReader("X-Version"),
-        new MediaTypeApiVersionReader("ver")
-    );
+  options.AssumeDefaultVersionWhenUnspecified = true;
+  options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+  options.ReportApiVersions = true;
+  options.ApiVersionReader = ApiVersionReader.Combine(
+      new QueryStringApiVersionReader("api-version"),
+      new HeaderApiVersionReader("X-Version"),
+      new MediaTypeApiVersionReader("ver")
+  );
 });
 
 builder.Services.AddVersionedApiExplorer(options =>
 {
-    options.GroupNameFormat = "'v'VVV";
-    options.SubstituteApiVersionInUrl = true;
+  options.GroupNameFormat = "'v'VVV";
+  options.SubstituteApiVersionInUrl = true;
 });
 
 builder.Host.UseSerilog((ctx, lc) => lc.WriteTo.Console().ReadFrom.
@@ -96,32 +96,32 @@ builder.Services.AddScoped<IAuthManager, AuthManager>();
 // JWT JSON Web Token
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // "Bearer"
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme; // "Bearer"
+  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero,
-        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
-        ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])
-        )
-    };
+  options.TokenValidationParameters = new TokenValidationParameters
+  {
+    ValidateIssuerSigningKey = true,
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ClockSkew = TimeSpan.Zero,
+    ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+    ValidAudience = builder.Configuration["JwtSettings:Audience"],
+    IssuerSigningKey = new SymmetricSecurityKey(
+          Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Key"])
+      )
+  };
 });
 
 builder.Services.AddResponseCaching(options =>
 {
-    // in bytes the largest cacheable piece of data allowed to cache
-    options.MaximumBodySize = 1024;
-    // if someone requests a path with a different capitalization it will
-    // store the new request as well
-    options.UseCaseSensitivePaths = true;
+  // in bytes the largest cacheable piece of data allowed to cache
+  options.MaximumBodySize = 1024;
+  // if someone requests a path with a different capitalization it will
+  // store the new request as well
+  options.UseCaseSensitivePaths = true;
 });
 
 builder.Services.AddHealthChecks()
@@ -140,7 +140,7 @@ builder.Services.AddHealthChecks()
 
 builder.Services.AddControllers().AddOData(options =>
 {
-    options.Select().Filter().OrderBy();
+  options.Select().Filter().OrderBy();
 });
 
 var app = builder.Build();
@@ -154,82 +154,82 @@ app.UseSwaggerUI();
 // Can change the endpoint to anything. I chose '/healthcheck'
 app.MapHealthChecks("/healthcheck", new HealthCheckOptions
 {
-    Predicate = healthcheck => healthcheck.Tags.Contains("custom"),
-    ResultStatusCodes =
+  Predicate = healthcheck => healthcheck.Tags.Contains("custom"),
+  ResultStatusCodes =
     {
         [HealthStatus.Healthy] = StatusCodes.Status200OK,
         [HealthStatus.Degraded] = StatusCodes.Status200OK,
         [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
     },
-    ResponseWriter = WriteResponse
+  ResponseWriter = WriteResponse
 });
 
 app.MapHealthChecks("/databasehealthcheck", new HealthCheckOptions
 {
-    Predicate = healthcheck => healthcheck.Tags.Contains("database"),
-    ResultStatusCodes =
+  Predicate = healthcheck => healthcheck.Tags.Contains("database"),
+  ResultStatusCodes =
     {
         [HealthStatus.Healthy] = StatusCodes.Status200OK,
         [HealthStatus.Degraded] = StatusCodes.Status200OK,
         [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
     },
-    ResponseWriter = WriteResponse
+  ResponseWriter = WriteResponse
 });
 //.RequireAuthorization(); // returns 401 if unauthorized
 
 app.MapHealthChecks("/healthz", new HealthCheckOptions
 {
-    ResultStatusCodes =
+  ResultStatusCodes =
     {
         [HealthStatus.Healthy] = StatusCodes.Status200OK,
         [HealthStatus.Degraded] = StatusCodes.Status200OK,
         [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
     },
-    ResponseWriter = WriteResponse
+  ResponseWriter = WriteResponse
 });
 
 static Task WriteResponse(HttpContext context, HealthReport report)
 {
-    context.Response.ContentType = "application/json; charset=utf-8";
+  context.Response.ContentType = "application/json; charset=utf-8";
 
-    var options = new JsonWriterOptions { Indented = true };
+  var options = new JsonWriterOptions { Indented = true };
 
-    using var memoryStream = new MemoryStream();
-    using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+  using var memoryStream = new MemoryStream();
+  using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
+  {
+    jsonWriter.WriteStartObject();
+    jsonWriter.WriteString("status", report.Status.ToString());
+    jsonWriter.WriteStartObject("results");
+
+    foreach (var healthReportEntry in report.Entries)
     {
-        jsonWriter.WriteStartObject();
-        jsonWriter.WriteString("status", report.Status.ToString());
-        jsonWriter.WriteStartObject("results");
+      jsonWriter.WriteStartObject(healthReportEntry.Key);
+      jsonWriter.WriteString("status",
+          healthReportEntry.Value.Status.ToString());
+      jsonWriter.WriteString("description",
+          healthReportEntry.Value.Description);
+      jsonWriter.WriteStartObject("data");
 
-        foreach (var healthReportEntry in report.Entries)
-        {
-            jsonWriter.WriteStartObject(healthReportEntry.Key);
-            jsonWriter.WriteString("status",
-                healthReportEntry.Value.Status.ToString());
-            jsonWriter.WriteString("description",
-                healthReportEntry.Value.Description);
-            jsonWriter.WriteStartObject("data");
+      foreach (var item in healthReportEntry.Value.Data)
+      {
+        jsonWriter.WritePropertyName(item.Key);
 
-            foreach (var item in healthReportEntry.Value.Data)
-            {
-                jsonWriter.WritePropertyName(item.Key);
+        JsonSerializer.Serialize(
+            jsonWriter, item.Value,
+            item.Value?.GetType() ?? typeof(object));
+      }
 
-                JsonSerializer.Serialize(
-                    jsonWriter, item.Value,
-                    item.Value?.GetType() ?? typeof(object));
-            }
-
-            jsonWriter.WriteEndObject();
-            jsonWriter.WriteEndObject();
-        }
-
-        jsonWriter.WriteEndObject();
-        jsonWriter.WriteEndObject();
+      jsonWriter.WriteEndObject();
+      jsonWriter.WriteEndObject();
     }
 
-    return context.Response.WriteAsync(
-        Encoding.UTF8.GetString(memoryStream.ToArray())
-    );
+    jsonWriter.WriteEndObject();
+    jsonWriter.WriteEndObject();
+  }
+
+  return context.Response.WriteAsync(
+      Encoding.UTF8.GetString(memoryStream.ToArray())
+  );
 }
 
 app.MapHealthChecks("/health");
@@ -244,16 +244,16 @@ app.UseResponseCaching();
 
 app.Use(async (context, next) =>
 {
-    context.Response.GetTypedHeaders().CacheControl =
-        new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
-        {
-            Public = true,
-            MaxAge = TimeSpan.FromSeconds(10)
-        };
-    context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
-        new string[] { "Accept-Encoding" };
+  context.Response.GetTypedHeaders().CacheControl =
+      new Microsoft.Net.Http.Headers.CacheControlHeaderValue()
+      {
+        Public = true,
+        MaxAge = TimeSpan.FromSeconds(10)
+      };
+  context.Response.Headers[Microsoft.Net.Http.Headers.HeaderNames.Vary] =
+      new string[] { "Accept-Encoding" };
 
-    await next();
+  await next();
 });
 
 app.UseAuthentication();
@@ -334,34 +334,34 @@ const string landingPageHtml = @"
 </html>";
 
 // Adding RouteEndpoint to IEndpointRouteBuilder for landing page
-app.MapGet("/", context => 
+app.MapGet("/", context =>
 {
-    context.Response.ContentType = "text/html";
-    return context.Response.WriteAsync(landingPageHtml);
+  context.Response.ContentType = "text/html";
+  return context.Response.WriteAsync(landingPageHtml);
 });
 
 app.Run();
 
 class CustomHealthCheck : IHealthCheck
 {
-    public Task<HealthCheckResult> CheckHealthAsync(
-        HealthCheckContext context,
-        CancellationToken cancellationToken = default)
+  public Task<HealthCheckResult> CheckHealthAsync(
+      HealthCheckContext context,
+      CancellationToken cancellationToken = default)
+  {
+    var isHealthy = true;
+
+    // custom checks. logic... etc.etc.
+
+    if (isHealthy)
     {
-        var isHealthy = true;
-
-        // custom checks. logic... etc.etc.
-
-        if (isHealthy)
-        {
-            return Task.FromResult(HealthCheckResult.Healthy(
-                "All systems are looking good"
-            ));
-        }
-
-        return Task.FromResult(new HealthCheckResult(
-                context.Registration.FailureStatus, "System Unhealthy"
-            )
-        );
+      return Task.FromResult(HealthCheckResult.Healthy(
+          "All systems are looking good"
+      ));
     }
+
+    return Task.FromResult(new HealthCheckResult(
+            context.Registration.FailureStatus, "System Unhealthy"
+        )
+    );
+  }
 }

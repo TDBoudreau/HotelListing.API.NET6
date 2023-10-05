@@ -2,7 +2,5 @@
 
 namespace HotelListing.API.Core.Contracts
 {
-    public interface IHotelsRepository : IGenericRepository<Hotel>
-    {
-    }
+  public interface IHotelsRepository : IGenericRepository<Hotel> { }
 }
